@@ -4,6 +4,7 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_create_user.*
 import tech.k0tlin.smack.R
 import tech.k0tlin.smack.Services.AuthService
@@ -55,11 +56,22 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserClicked(view: View) {
-        AuthService.registerUser(this, "j@j.com", "123456") { complete ->
-            if (complete) {
+        val inputEmail = createEmailText.text.toString()
+        val inputPassword = createPasswordText.text.toString()
 
+        if (inputEmail == "" || inputPassword == "") {
+            println("Fields are empty")
+        } else {
+            AuthService.registerUser(this, inputEmail, inputPassword) { registerSuccess ->
+                if (registerSuccess) {
+                    AuthService.loginUser(this, inputEmail, inputPassword) { loginSuccess ->
+                        if (loginSuccess) {
+                            println(AuthService.authToken)
+                            println(AuthService.userEmail)
+                        }
+                    }
+                }
             }
         }
-
     }
 }
